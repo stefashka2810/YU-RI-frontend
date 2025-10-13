@@ -44,7 +44,6 @@ export const handleApiError = (error: unknown): string => {
         }
     }
     
-    // Если это сетевая ошибка
     if (error instanceof TypeError && error.message === 'Failed to fetch') {
         return 'Ошибка подключения к серверу. Проверьте интернет-соединение.';
     }

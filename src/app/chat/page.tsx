@@ -2,48 +2,54 @@
 import ChatInput from "@/components/chat/chatInput/ChatInput";
 import ChatSidebar from "@/components/chat/chatSidebar/ChatSidebar";
 import ChatHeader from "@/components/chat/chatHeader/ChatHeader";
-import ChatMessages, { Message } from "@/components/chat/chatMessages/ChatMessages";
+import ChatMessages from "@/components/chat/chatMessages/ChatMessages";
 import DocumentEditor from "@/components/chat/documentEditor/DocumentEditor";
 import { useState } from "react";
-
-// Моковые ответы от бота
-const MOCK_RESPONSES = [
-    "Согласно статье 304 ГК РФ, собственник может требовать устранения всяких нарушений его права, хотя бы эти нарушения и не были соединены с лишением владения.",
-    "Для решения данного вопроса необходимо обратиться в суд с исковым заявлением. Рекомендую собрать все доказательства нарушения.",
-    "В вашем случае применима статья 15 ГК РФ о возмещении убытков. Вам необходимо подготовить расчет причиненного ущерба.",
-    "Согласно Трудовому кодексу РФ, работодатель обязан выплатить все причитающиеся суммы в день увольнения.",
-    "Рекомендую направить досудебную претензию. Это обязательный этап перед обращением в суд по большинству споров."
-];
+import { useChat } from "@/hooks/useChat";
 
 const ChatPage = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
+    const { currentChat, sendMessage, parsePdf, createNewChat } = useChat();
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [attachedFile, setAttachedFile] = useState<File | null>(null);
 
-    const handleSendMessage = (text: string, file?: File) => {
-        if (!text && !file) return;
+    // Преобразуем сообщения из API в формат компонента
+    const messages = currentChat?.messages?.map(msg => ({
+        id: msg.id,
+        text: msg.content,
+        isUser: msg.role === 'user',
+        timestamp: new Date(msg.created_at),
+    })) || [];
 
-        // Добавляем сообщение пользователя
-        const userMessage: Message = {
-            id: Date.now(),
-            text: text || (file ? `Отправлен файл: ${file.name}` : ''),
-            isUser: true,
-            timestamp: new Date(),
-        };
+    const handleSendMessage = async (text: string, file?: File) => {
+        let messageText = text;
 
-        setMessages(prev => [...prev, userMessage]);
+        // Если есть файл PDF - парсим его
+        if (file && file.type === 'application/pdf') {
+            const parsedText = await parsePdf(file);
+            if (parsedText) {
+                messageText = text ? `${text}\n\nТекст из PDF:\n${parsedText}` : parsedText;
+            }
+        }
 
-        // Имитация ответа бота через 1 секунду
-        setTimeout(() => {
-            const randomResponse = MOCK_RESPONSES[Math.floor(Math.random() * MOCK_RESPONSES.length)];
-            const botMessage: Message = {
-                id: Date.now(),
-                text: randomResponse,
-                isUser: false,
-                timestamp: new Date(),
-            };
-            setMessages(prev => [...prev, botMessage]);
-        }, 1000);
+        if (!messageText) return; // Нельзя отправить пустое сообщение
+
+        // Если нет активного чата - создаем новый
+        if (!currentChat) {
+            // Название чата = первые 50 символов сообщения
+            const chatTitle = messageText.length > 50 
+                ? messageText.substring(0, 50) + '...' 
+                : messageText;
+            
+            // Создаем чат и получаем его
+            const newChat = await createNewChat(chatTitle);
+            
+            // Отправляем сообщение в созданный чат
+            if (newChat) {
+                await sendMessage(messageText, newChat.id);
+            }
+        } else {
+            await sendMessage(messageText);
+        }
     };
 
     return (
@@ -55,53 +61,73 @@ const ChatPage = () => {
                 {/* Область чата */}
                 <div className={`flex flex-col h-full transition-all duration-300 ${isEditorOpen ? 'w-[calc(50%)]' : 'w-full'}`}>
                     {/* Header */}
-                    <ChatHeader onOpenEditor={() => setIsEditorOpen(true)} isEditorOpen={isEditorOpen} />
+                    <ChatHeader onOpenEditor={() => setIsEditorOpen(!isEditorOpen)} isEditorOpen={isEditorOpen} />
                     
-                    {/* Если нет сообщений - показываем инпут по центру */}
-                    {messages.length === 0 ? (
-                        <div className="flex-1 flex items-center pb-[4vw]">
-                            <div className="w-full pl-[2.4vw]">
-                                <div className="w-[65%] mx-auto">
-                                    <ChatInput 
-                                        onSendMessage={handleSendMessage}
-                                        onFileAttach={(file) => {
-                                            setAttachedFile(file);
-                                            setIsEditorOpen(true);
-                                        }}
-                                    />
+                    {currentChat ? (
+                        <>
+                        
+                        {/* Если нет сообщений - показываем инпут по центру */}
+                        {messages.length === 0 ? (
+                            <div className="flex-1 flex items-center pb-[4vw]">
+                                <div className="w-full pl-[2.4vw]">
+                                    <div className="w-[65%] mx-auto">
+                                        <ChatInput 
+                                            onSendMessage={handleSendMessage}
+                                            onFileAttach={(file) => {
+                                                setAttachedFile(file);
+                                                setIsEditorOpen(true);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ) : (
-                        /* Если есть сообщения - показываем переписку + инпут внизу */
-                        <div className="flex-1 flex flex-col overflow-hidden -mt-[4vw]">
-                            <div 
-                                className="flex-1 overflow-y-auto"
-                                style={{
-                                    scrollbarWidth: 'none',
-                                    msOverflowStyle: 'none',
-                                }}
-                            >
-                                <style jsx>{`
-                                    div::-webkit-scrollbar {
-                                        display: none;
-                                    }
-                                `}</style>
-                                <ChatMessages messages={messages} />
-                            </div>
-                            <div className="flex-shrink-0 w-full pb-[1.5vw] pl-[2.4vw]">
-                                <div className="w-[65%] mx-auto">
-                                    <ChatInput 
-                                        onSendMessage={handleSendMessage}
-                                        onFileAttach={(file) => {
-                                            setAttachedFile(file);
-                                            setIsEditorOpen(true);
-                                        }}
-                                    />
+                        ) : (
+                            /* Если есть сообщения - показываем переписку + инпут внизу */
+                            <div className="flex-1 flex flex-col overflow-hidden -mt-[4vw]">
+                                <div 
+                                    className="flex-1 overflow-y-auto"
+                                    style={{
+                                        scrollbarWidth: 'none',
+                                        msOverflowStyle: 'none',
+                                    }}
+                                >
+                                    <style jsx>{`
+                                        div::-webkit-scrollbar {
+                                            display: none;
+                                        }
+                                    `}</style>
+                                    <ChatMessages messages={messages} />
+                                </div>
+                                <div className="flex-shrink-0 w-full pb-[1.5vw] pl-[1vw]">
+                                    <div className="w-[55%] mx-auto">
+                                        <ChatInput 
+                                            onSendMessage={handleSendMessage}
+                                            onFileAttach={(file) => {
+                                                setAttachedFile(file);
+                                                setIsEditorOpen(true);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
+                        )}
+                    </>
+                ) : (
+                    /* Если нет выбранного чата - показываем инпут как в ChatGPT */
+                    <div className="flex-1 flex items-center pb-[4vw]">
+                        <div className="w-full pl-[1vw]">
+                            <div className="w-[55%] mx-auto">
+                                <ChatInput 
+                                    onSendMessage={handleSendMessage}
+                                    onFileAttach={(file) => {
+                                        setAttachedFile(file);
+                                        setIsEditorOpen(true);
+                                    }}
+                                />
+                            </div>
                         </div>
-                    )}
+                    </div>
+                )}
                 </div>
 
                 {/* Область редактора */}
@@ -118,6 +144,8 @@ const ChatPage = () => {
                     </div>
                 )}
             </div>
+            
+
         </div>
     )
 }

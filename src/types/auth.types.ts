@@ -28,8 +28,9 @@ export interface EmailVerify {
 // Ответ от API после успешной авторизации/регистрации
 export interface AuthResponse {
     access_token: string;
+    refresh_token?: string;
     token_type: string;
-    user: User;
+    user?: User;
 }
 
 // Ответ с ошибкой от API
@@ -43,7 +44,7 @@ export interface ValidationError {
     type: string;
     loc: (string | number)[];
     msg: string;
-    input?: any;
-    ctx?: any;
+    input?: unknown;
+    ctx?: Record<string, unknown>;
     url?: string;
 }

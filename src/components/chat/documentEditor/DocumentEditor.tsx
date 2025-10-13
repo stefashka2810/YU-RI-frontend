@@ -9,6 +9,115 @@ interface DocumentEditorProps {
     onFileSelect: (file: File) => void;
 }
 
+
+export const Editor = () => {
+    const [fontSize, setFontSize] = useState('12');
+    const [fontFamily, setFontFamily] = useState('Montserrat');
+
+    return (
+        <div className='flex flex-col w-[13.5vw] h-[7vw] bg-transparent'>
+            {/* Панель инструментов */}
+            <div className='flex flex-col gap-[0.5vw] p-[1vw] '>
+                {/* Первая строка: шрифт и размер */}
+                <div className='flex flex-row gap-[0.5vw]'>
+                    <select
+                        value={fontFamily}
+                        onChange={(e) => setFontFamily(e.target.value)}
+                        className='bg-transparent border border-[#FFFFFFCC] rounded-[4px] text-white px-[1vw] py-[0.4vw] text-[0.8vw] min-w-[10vw]'
+                    >
+                        <option value="Montserrat" className='bg-black'>Montserrat</option>
+                        <option value="Arial" className='bg-black'>Arial</option>
+                        <option value="Times New Roman" className='bg-black'>Times New Roman</option>
+                    </select>
+                    <select
+                        value={fontSize}
+                        onChange={(e) => setFontSize(e.target.value)}
+                        className='bg-transparent border border-[#FFFFFFCC] rounded-[4px] text-white px-[0.8vw] py-[0.4vw] text-[0.8vw] min-w-[4vw]'
+                    >
+                        <option value="10" className='bg-black'>10</option>
+                        <option value="12" className='bg-black'>12</option>
+                        <option value="14" className='bg-black'>14</option>
+                        <option value="16" className='bg-black'>16</option>
+                        <option value="18" className='bg-black'>18</option>
+                        <option value="20" className='bg-black'>20</option>
+                    </select>
+                </div>
+
+                {/* Вторая строка: форматирование текста */}
+                <div className='flex flex-row gap-[0.5vw]'>
+                    <div className='flex flex-row border border-[#FFFFFFCC] rounded-[4px]'>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/bold.png' alt='bold' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/italic.png' alt='italic' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/underline.png' alt='underline' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/strikethrough.png' alt='strikethrough' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors'>
+                            <Image src='/editorImages/type.png' alt='type' width={24} height={24} />
+                        </button>
+                    </div>
+
+                    <div className='flex flex-row border border-[#FFFFFFCC] rounded-[4px]'>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/align-left.png' alt='align-left' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/align-center.png' alt='align-center' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors'>
+                            <Image src='/editorImages/align-right.png' alt='align-right' width={24} height={24} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Третья строка: дополнительные функции */}
+                <div className='flex flex-row gap-[0.5vw]'>
+                    <div className='flex flex-row border border-[#FFFFFFCC] rounded-[4px]'>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/list.png' alt='list' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors'>
+                            <Image src='/editorImages/numberedList.png' alt='numberedList' width={24} height={24} />
+                        </button>
+                    </div>
+
+                    <div className='flex flex-row border border-[#FFFFFFCC] rounded-[4px]'>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/link-2.png' alt='link' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/image.png' alt='image' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/youtube.png' alt='youtube' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors'>
+                            <Image src='/editorImages/code.png' alt='code' width={24} height={24} />
+                        </button>
+                    </div>
+
+                    <div className='flex flex-row border border-[#FFFFFFCC] rounded-[4px]'>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors border-r border-[#FFFFFF33]'>
+                            <Image src='/editorImages/S2.png' alt='superscript' width={24} height={24} />
+                        </button>
+                        <button className='p-[0.7vw] hover:bg-[#FFFFFF1A] transition-colors'>
+                            <Image src='/editorImages/S2 (1).png' alt='subscript' width={24} height={24} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+    );
+}
+
 const DocumentEditor = ({ file, onClose, onFileSelect }: DocumentEditorProps) => {
     const [isDragging, setIsDragging] = useState(false);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -205,5 +314,6 @@ const DocumentEditor = ({ file, onClose, onFileSelect }: DocumentEditorProps) =>
     );
 };
 
-export default DocumentEditor;
 
+
+export default DocumentEditor;

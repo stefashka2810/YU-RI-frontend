@@ -18,13 +18,14 @@ const VerifyEmailPage = () => {
         if (verifyToken) {
             handleVerification(verifyToken);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     const handleVerification = async (token: string) => {
         try {
             const response = await authService.verifyEmail(token);
             setStatus('success');
-            setMessage(response.message || 'Email успешно подтвержден!');
+            setMessage(typeof response === 'string' ? response : 'Email успешно подтвержден!');
             
             // Редирект на страницу чата через 2 секунды
             setTimeout(() => {

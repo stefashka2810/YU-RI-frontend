@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserLogin, UserRegister } from '@/types/auth.types';
 import authService from '@/services/auth.service';
-import { isAuthenticated } from '@/utils/token.utils';
+import { isAuthenticated, getToken, getRefreshToken } from '@/utils/token.utils';
 import { handleApiError } from '@/utils/error.utils';
 import { useRouter } from 'next/navigation';
 
@@ -29,14 +29,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Проверяем токен при загрузке приложения
     useEffect(() => {
-        const checkAuth = () => {
-            if (isAuthenticated()) {
-                // TODO: Здесь можно добавить запрос для получения данных пользователя
-                // Пока просто проверяем наличие токена
+        const checkAuth = async () => {
+            const accessToken = getToken();
+            const refreshToken = getRefreshToken();
+            
+            // Если есть refresh_token но нет access_token - обновляем
+            if (!accessToken && refreshToken) {
+                try {
+                    await authService.refreshToken();
+                    console.log('Access токен обновлен при загрузке');
+                } catch (error) {
+                    console.error('Не удалось обновить токен при загрузке:', error);
+                    authService.logout();
+                    router.push('/login');
+                }
             }
         };
         checkAuth();
-    }, []);
+    }, [router]);
 
     // Функция логина
     const login = async (credentials: UserLogin) => {

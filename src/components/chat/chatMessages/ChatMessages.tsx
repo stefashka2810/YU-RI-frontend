@@ -21,7 +21,7 @@ const ChatMessages = ({ messages }: ChatMessagesProps) => {
     }, [messages]);
 
     return (
-        <div className='w-full pl-[1vw] pb-[2vw] pt-[0.7vw] space-y-[1.5vw] relative z-20'>
+        <div className='w-full pl-[1vw] pr-[0.5vw] pb-[2vw] pt-[0.7vw] space-y-[1.5vw] relative z-20'>
             <div className='w-[65%] mx-auto'>
                 {messages.map((message) => (
                     <div 

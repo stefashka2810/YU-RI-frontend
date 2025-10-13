@@ -1,25 +1,56 @@
-// Ключ для хранения токена в localStorage
-const TOKEN_KEY = 'auth_token';
+// Ключи для хранения токенов в localStorage
+const ACCESS_TOKEN_KEY = 'access_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+const OLD_TOKEN_KEY = 'auth_token'; // Старый ключ для удаления
 
-// Сохранить токен в localStorage
+// Сохранить access токен в localStorage
 export const saveToken = (token: string): void => {
     if (typeof window !== 'undefined') {
-        localStorage.setItem(TOKEN_KEY, token);
+        // Удаляем старый токен если он есть
+        localStorage.removeItem(OLD_TOKEN_KEY);
+        localStorage.setItem(ACCESS_TOKEN_KEY, token);
     }
 };
 
-// Получить токен из localStorage
+// Сохранить refresh токен в localStorage
+export const saveRefreshToken = (token: string): void => {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem(REFRESH_TOKEN_KEY, token);
+    }
+};
+
+// Получить access токен из localStorage
 export const getToken = (): string | null => {
     if (typeof window !== 'undefined') {
-        return localStorage.getItem(TOKEN_KEY);
+        // Сначала проверяем новый ключ
+        const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+        if (token) return token;
+        
+        // Если нет, проверяем старый ключ и мигрируем
+        const oldToken = localStorage.getItem(OLD_TOKEN_KEY);
+        if (oldToken) {
+            localStorage.setItem(ACCESS_TOKEN_KEY, oldToken);
+            localStorage.removeItem(OLD_TOKEN_KEY);
+            return oldToken;
+        }
     }
     return null;
 };
 
-// Удалить токен из localStorage (при logout)
+// Получить refresh токен из localStorage
+export const getRefreshToken = (): string | null => {
+    if (typeof window !== 'undefined') {
+        return localStorage.getItem(REFRESH_TOKEN_KEY);
+    }
+    return null;
+};
+
+// Удалить оба токена из localStorage (при logout)
 export const removeToken = (): void => {
     if (typeof window !== 'undefined') {
-        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+        localStorage.removeItem(OLD_TOKEN_KEY); // Удаляем и старый токен
     }
 };
 

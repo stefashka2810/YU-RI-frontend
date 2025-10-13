@@ -49,14 +49,14 @@ const ChatInput = ({ onSendMessage, onFileAttach }: ChatInputProps) => {
                     <Image
                         src='/chatImages/Send.png'
                         alt='send'
-                        width={24}
-                        height={24}
+                        width={20}
+                        height={20}
                     />
                 </button>
             </div>
 
             <div className='flex flex-row items-center'>
-                <label className="hover:opacity-80 hover:cursor-pointer flex flex-row items-center gap-[0.1vw] pr-[0.3vw] py-[0.2vw] border border-[#FFFFFF33] rounded-[8px] text-white text-[0.9vw]">
+                <label className="hover:opacity-80 hover:cursor-pointer flex flex-row items-center gap-[0.1vw] pr-[0.3vw] py-[0.2vw] border border-[#FFFFFF33] rounded-[8px] text-white text-[0.8vw]">
                     <Image
                         src='/chatImages/FileIcon.png'
                         alt='attach'
