@@ -12,18 +12,39 @@ export interface Message {
 interface ChatMessagesProps {
     messages: Message[];
     isLoading?: boolean;
+    isEditorOpen?: boolean;
+    onRegenerateMessage?: (messageId: number) => void;
 }
 
-const ChatMessages = ({ messages, isLoading = false }: ChatMessagesProps) => {
+const ChatMessages = ({ messages, isLoading = false, isEditorOpen = false, onRegenerateMessage }: ChatMessagesProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const chatWidth = isEditorOpen ? 32 : 41;
+    const chatWidthStyle = { width: `${chatWidth}vw` };
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // Функция копирования текста
+    const copyToClipboard = async (text: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            console.log('Текст скопирован в буфер обмена');
+        } catch (err) {
+            console.error('Ошибка при копировании:', err);
+        }
+    };
+
+    // Функция повторной генерации ответа
+    const handleRegenerate = (messageId: number) => {
+        if (onRegenerateMessage) {
+            onRegenerateMessage(messageId);
+        }
+    };
+
     return (
         <div className='w-full pl-[1vw] pr-[0.5vw] pb-[2vw] pt-[0.7vw] space-y-[1.5vw] relative z-20'>
-            <div className='w-[65%] mx-auto'>
+            <div className='mx-auto' style={chatWidthStyle}>
                 {messages.map((message) => (
                     <div 
                         key={message.id}
@@ -46,8 +67,18 @@ const ChatMessages = ({ messages, isLoading = false }: ChatMessagesProps) => {
                             {
                             !message.isUser && (
                                 <div className='flex flex-row gap-[0.7vw] mt-[0.7vw]'>
-                                    <Image src='/chatImages/copy.png' alt='copy' width={20} height={20} />
-                                    <Image src='/chatImages/update&image.png' alt='update&image' width={20} height={20} />
+                                    <button 
+                                        onClick={() => copyToClipboard(message.text)}
+                                        className="hover:cursor-pointer"
+                                    >
+                                        <Image src='/chatImages/copy.png' alt='copy' width={20} height={20} />
+                                    </button>
+                                    <button 
+                                        onClick={() => handleRegenerate(message.id)}
+                                        className="hover:cursor-pointer"
+                                    >
+                                        <Image src='/chatImages/update&image.png' alt='regenerate' width={20} height={20} />
+                                    </button>
                                 </div>
                             )
                         }

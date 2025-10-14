@@ -17,13 +17,13 @@ const AboutPrices = () => {
                         </div>
 
                         <div className="text-[1.6vw] font-medium mb-[1.2vw]">
-                            2000 ₽ / МЕС
+                            0 ₽ / МЕС
                         </div>
 
                         <ul className="text-[0.85vw] leading-[1.5] space-y-[0.4vw] mb-[2vw] opacity-90">
-                            <li>— пункт</li>
-                            <li>— пункт</li>
-                            <li>— пункт</li>
+                            <li>— ЗАГРУЗКА ФАЙЛОВ (С ЛИМИТОМ)</li>
+                            <li>— РЕДАКТИРОВАНИЕ ДОКУМЕНТОВ</li>
+                            <li>— АНАЛИТИКА И ПОДСВЕТКА РИСКОВ</li>
                         </ul>
                     </div>
 
@@ -46,13 +46,13 @@ const AboutPrices = () => {
                         </div>
 
                         <div className="text-[1.6vw] font-medium mb-[1.2vw]">
-                            5000 ₽ / МЕС
+                            5 000 ₽ / МЕС
                         </div>
 
                         <ul className="text-[0.85vw] leading-[1.5] space-y-[0.4vw] mb-[2vw] text-black/80">
-                            <li>— пункт</li>
-                            <li>— пункт</li>
-                            <li>— пункт</li>
+                            <li>— ВЕСЬ БАЗОВЫЙ ФУНКЦИОНАЛ</li>
+                            <li>— УВЕЛИЧЕНИЕ ЛИМИТОВ</li>
+                            <li>— ГЕНЕРАЦИЯ ДОКУМЕНТОВ</li>
                         </ul>
                     </div>
 
@@ -74,14 +74,12 @@ const AboutPrices = () => {
                         </div>
 
                         <div className="text-[1.6vw] font-medium mb-[1.2vw]">
-                            10000 ₽ / МЕС
+                            15 000 ₽ / МЕС
                         </div>
 
                         <ul className="text-[0.85vw] leading-[1.5] space-y-[0.4vw] mb-[2vw] text-black/80">
-                            <li>— пункт</li>
-                            <li>— пункт</li>
-                            <li>— пункт</li>
-                            <li>— пункт</li>
+                            <li>— ВЕСЬ ПРОДВИНУТЫЙ ФУНКЦИОНАЛ</li>
+                            <li>— ДОСТУП К РЕЖИМУ УЛЬТРА</li>
                         </ul>
                     </div>
 

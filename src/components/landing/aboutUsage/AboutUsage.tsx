@@ -10,7 +10,7 @@ const AboutUsage= () => {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-[28vw_1fr] h-auto items-start">
+                <div className="grid grid-cols-[28vw_1fr] h-auto items-start gap-[2vw]">
                     <div className='flex flex-col'>
                         <div className='relative min-h-[18vw] mb-[2vw]'>
                             <Image
@@ -64,23 +64,23 @@ const AboutUsage= () => {
                     </div>
 
 
-                    <div className="sticky top-0 self-start">
+                    <div className="sticky top-0 self-start -mt-[3.5vw]">
                         <Image
                             src="/landingImages/computer.png"
                             alt="computer"
                             width={1000}
                             height={620}
-
+                            className="max-w-full h-auto"
                         />
                     </div>
                 </div>
             </article>
-            <section className="mt-[6.5vw] ml-[16.7vw] mr-[16.7vw]">
+            <section className="mt-[6.5vw] ml-[16.4vw] mr-[16.7vw]">
                 <h2 className="text-[2.5vw] font-medium mb-[3vw]">
                     КОМУ ПОДОЙДЕТ СЕРВИС
                 </h2>
 
-                <div className="grid grid-cols-3 gap-[2.7vw]">
+                <div className="grid grid-cols-3 gap-[2.5vw]">
                     <div className="flex flex-col">
                         <div className="text-[1vw] font-medium mb-[0.5vw]">01</div>
                         <div className="text-[1.2vw] font-medium mb-[1.5vw]">ЮРИСТАМ</div>

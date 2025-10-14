@@ -4,21 +4,17 @@ import Image from "next/image";
 
 const faqs = [
     {
-        q: "ТУПОРЫЛЫЙ ВОПРОС",
-        a: "НЕ МЕНЕЕ ТУПОРЫЛЫЙ ОТВЕТ. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+        q: "У КОГО ЕСТЬ ДОСТУП К ИИ-АГЕНТАМ?",
+        a: "ИИ-АГЕНТЫ РАЗРАБАТЫВАЮТСЯ ПО ДОГОВОРЕННОСТИ С КОМПАНИЯМИ, ДЛЯ ВСЕХ ОСТАЛЬНЫХ ДЕЙСТВУЕТ SAAS МОДЕЛЬ С НАШИМ БАЗОВЫМ ФУНКЦИОНАЛОМ: АНАЛИЗ, ГЕНЕРАЦИЯ, РЕДАКТИРОВАНИЕ."
     },
     {
-        q: "ТУПОРЫЛЫЙ ВОПРОС",
-        a: "Ответ про пункт 2. Нужный текст можно заменить."
+        q: "У КОГО ЕСТЬ ДОСТУП К ИИ-АГЕНТАМ?",
+        a: "ИИ-АГЕНТЫ РАЗРАБАТЫВАЮТСЯ ПО ДОГОВОРЕННОСТИ С КОМПАНИЯМИ, ДЛЯ ВСЕХ ОСТАЛЬНЫХ ДЕЙСТВУЕТ SAAS МОДЕЛЬ С НАШИМ БАЗОВЫМ ФУНКЦИОНАЛОМ: АНАЛИЗ, ГЕНЕРАЦИЯ, РЕДАКТИРОВАНИЕ."
     },
     {
-        q: "ТУПОРЫЛЫЙ ВОПРОС",
-        a: "Ответ про пункт 3. Нужный текст можно заменить."
-    },
-    {
-        q: "ТУПОРЫЛЫЙ ВОПРОС",
-        a: "Ответ про пункт 4. Нужный текст можно заменить."
-    },
+        q: "КАК МЫ ОБЕСПЕЧИВАЕМ БЕЗОПАСНОСТЬ ДАННЫХ?",
+        a: "ДОКУМЕНТЫ ОТПРАВЛЯЮТСЯ В СИСТЕМУ ТОЛЬКО ДЛЯ АНАЛИЗА: ПОСЛЕ ФОРМИРОВАНИЯ РЕЗУЛЬТАТА ИСХОДНЫЕ ДАННЫЕ НЕ СОХРАНЯЮТСЯ. ВСЕ СОЕДИНЕНИЯ ЗАЩИЩЕНЫ: ПЕРЕДАЧА ПРОИСХОДИТ ПО ЗАЩИЩЁННЫМ СЕССИЯМ."
+    }
 ];
 
 const QuestionSection = () => {
@@ -27,7 +23,7 @@ const QuestionSection = () => {
     return (
         <section className="grid grid-cols-[33vw_auto] mt-[5vw]">
             <Image src='/landingImages/6.png' alt='ball' width={600} height={600} />
-            <section className="pt-[20vw] w-[45vw]">
+            <section className="pt-[20vw] w-[55vw]">
                 {/* Заголовок */}
                 <h2 className="text-[2.2vw] font-medium mb-[1.7vw]">FAQ</h2>
 
@@ -73,10 +69,7 @@ const QuestionSection = () => {
                                 <div
                                     className={`grid transition-all duration-300 ease-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
                                 >
-                                    <div className="overflow-hidden pb-[1.4vw]">
-                                        <p className="text-[1vw]  mt-[1.4vw] mb-[1vw] text-black/80">
-                                            НЕ МЕНЕЕ ТУПОРЫЛЫЙ ОТВЕТ
-                                        </p>
+                                    <div className="overflow-hidden pt-[1.4vw] pb-[1.4vw]">
                                         <p className="text-[0.95vw] leading-[1.5] text-black/80">
                                             {item.a}
                                         </p>

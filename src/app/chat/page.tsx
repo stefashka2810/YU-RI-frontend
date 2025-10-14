@@ -135,7 +135,15 @@ const ChatPage = () => {
                                             display: none;
                                         }
                                     `}</style>
-                                            <ChatMessages messages={messages} isLoading={isLoading} />
+                                            <ChatMessages 
+                                                messages={messages} 
+                                                isLoading={isLoading} 
+                                                isEditorOpen={isEditorOpen}
+                                                onRegenerateMessage={(messageId) => {
+                                                    console.log('Повторная генерация для сообщения:', messageId);
+                                                    // Здесь можно добавить логику повторной генерации
+                                                }}
+                                            />
                                 </div>
                                 <div className="flex-shrink-0 w-full pb-[1.5vw] pl-[0.9vw]">
                                     <div className="mx-auto" style={chatWidthStyle}>

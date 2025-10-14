@@ -16,7 +16,7 @@ const AdditionalInfo = () => {
 
 
                 <div className="absolute top-1/2 -translate-y-1/3 translate-x-[-20vw] z-10 w-[50vw]">
-                    <div className='flex flex-col border-2 rounded-[35px] p-[2.6vw] gap-[2.6vw]' style={{
+                    <div className='flex flex-col border-2 rounded-[35px] p-[2.6vw] gap-[2.6vw] text-[1vw]' style={{
                         backgroundColor: 'rgba(255, 255, 255, 0.7)',
                         borderColor: 'rgba(255, 255, 255, 0.5)',
                         boxShadow: '66.23px 79.48px 82.77px 0px rgba(0, 0, 0, 0.07)',
