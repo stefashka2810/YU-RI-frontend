@@ -11,6 +11,8 @@ export const CHAT_BASE_URL = `${API_BASE_URL}/chat`;
 export const CREATE_CHAT_URL = `${CHAT_BASE_URL}/chats`;
 export const GET_CHATS_URL = `${CHAT_BASE_URL}/chats`;
 export const POST_MESSAGE_URL = `${CHAT_BASE_URL}/messages`;
+export const GET_CHAT_URL = (chatId: number) => `${CHAT_BASE_URL}/chats/${chatId}`;
+export const GENERATE_AI_RESPONSE_URL = (chatId: number) => `${CHAT_BASE_URL}/messages/${chatId}/ai-response`;
 
 // Parse endpoints
 export const PARSE_PDF_URL = `${API_BASE_URL}/parse/pdf`;

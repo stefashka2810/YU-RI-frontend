@@ -11,9 +11,10 @@ export interface Message {
 
 interface ChatMessagesProps {
     messages: Message[];
+    isLoading?: boolean;
 }
 
-const ChatMessages = ({ messages }: ChatMessagesProps) => {
+const ChatMessages = ({ messages, isLoading = false }: ChatMessagesProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -55,6 +56,25 @@ const ChatMessages = ({ messages }: ChatMessagesProps) => {
                         
                     </div>
                 ))}
+                
+                {/* Индикатор загрузки ответа нейросети */}
+                {isLoading && (
+                    <div className="flex justify-start mb-[1.5vw]">
+                        <div className="max-w-[90%]">
+                            <div className="px-[1.5vw] py-[1vw] rounded-[15px] bg-transparent text-white">
+                                <div className="flex items-center gap-[0.5vw]">
+                                    <div className="flex space-x-[0.2vw]">
+                                        <div className="w-[0.3vw] h-[0.3vw] bg-white rounded-full animate-bounce"></div>
+                                        <div className="w-[0.3vw] h-[0.3vw] bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                                        <div className="w-[0.3vw] h-[0.3vw] bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                    </div>
+                                    <p className="text-[0.9vw] text-gray-300">Думаю...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                
                 <div ref={messagesEndRef} />
             </div>
         </div>

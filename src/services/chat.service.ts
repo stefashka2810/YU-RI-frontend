@@ -44,6 +44,22 @@ const chatService = {
         return response;
     },
 
+    // Генерировать ответ ИИ
+    generateAiResponse: async (chatId: number): Promise<Message> => {
+        console.log('🚀 Отправка запроса на генерацию ответа ИИ:', {
+            url: `/chat/messages/${chatId}/ai-response`,
+            method: 'POST',
+            chatId
+        });
+        
+        const response = await apiRequest<Message>(`/chat/messages/${chatId}/ai-response`, {
+            method: 'POST',
+        });
+        
+        console.log('📨 Ответ от API:', response);
+        return response;
+    },
+
     // Парсинг PDF файла
     parsePdf: async (file: File, lang?: string): Promise<ParsePdfResponse> => {
         const token = getToken();

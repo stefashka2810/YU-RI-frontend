@@ -66,7 +66,7 @@ const ChatInput = ({ onSendMessage, onFileAttach }: ChatInputProps) => {
                     {file ? file.name : 'Прикрепить'}
                     <input 
                         type='file'
-                        accept='image/*,.pdf,.doc,.docx,.csv,.txt'
+                            accept='.doc,.docx'
                         className='hidden'
                         onChange={(e) => {
                             const selectedFile = e.target.files?.[0];

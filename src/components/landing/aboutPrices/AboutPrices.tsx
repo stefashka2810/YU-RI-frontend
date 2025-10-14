@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const AboutPrices = () => {
     return (
-        <section className="mt-[3.5vw] ml-[15vw] mr-[15vw] w-auto">
+        <section className="mt-[7vw] ml-[15vw] mr-[15vw] w-auto">
             <h2 className="text-[2.2vw] font-medium tracking-wide mb-[1.5vw]">
                 ЦЕНЫ
             </h2>

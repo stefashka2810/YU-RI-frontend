@@ -25,7 +25,18 @@ const ChatSidebar = () => {
                 </button>
             </div>
 
-            <div className="flex flex-col gap-[0.4vw] overflow-y-auto">
+            <div 
+                className="flex flex-col gap-[0.4vw] overflow-y-auto"
+                style={{
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                }}
+            >
+                <style jsx>{`
+                    div::-webkit-scrollbar {
+                        display: none;
+                    }
+                `}</style>
                 {chats.map((chat) => (
                     <div 
                         key={chat.id}

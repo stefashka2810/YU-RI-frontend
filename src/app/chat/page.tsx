@@ -6,11 +6,16 @@ import ChatMessages from "@/components/chat/chatMessages/ChatMessages";
 import DocumentEditor from "@/components/chat/documentEditor/DocumentEditor";
 import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
+import { Editor } from "@/components/chat/documentEditor/DocumentEditor";
 
 const ChatPage = () => {
-    const { currentChat, sendMessage, parsePdf, createNewChat } = useChat();
+    const { currentChat, sendMessage, parsePdf, createNewChat, isLoading } = useChat();
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [attachedFile, setAttachedFile] = useState<File | null>(null);
+    
+    // Используем CSS переменные для корректной работы ширины
+    const chatWidth = isEditorOpen ? 32 : 43;
+    const chatWidthStyle = { width: `${chatWidth}vw` };
 
     // Преобразуем сообщения из API в формат компонента
     const messages = currentChat?.messages?.map(msg => ({
@@ -23,18 +28,48 @@ const ChatPage = () => {
     const handleSendMessage = async (text: string, file?: File) => {
         let messageText = text;
 
-        // Если есть файл PDF - парсим его
-        if (file && file.type === 'application/pdf') {
-            const parsedText = await parsePdf(file);
-            if (parsedText) {
-                messageText = text ? `${text}\n\nТекст из PDF:\n${parsedText}` : parsedText;
+        console.log('handleSendMessage вызван:', { text, file: file?.name });
+
+        // Если есть файл - парсим его
+        if (file) {
+            if (file.type === 'application/pdf') {
+                // PDF файл
+                console.log('Парсинг PDF файла...');
+                const parsedText = await parsePdf(file);
+                if (parsedText) {
+                    messageText = text ? `${text}\n\nТекст из PDF:\n${parsedText}` : parsedText;
+                }
+            } else if (file.name.endsWith('.docx')) {
+                // DOCX файл - парсим с помощью mammoth
+                console.log('Парсинг DOCX файла...');
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const mammoth = (await import('mammoth')).default;
+                    const result = await mammoth.convertToHtml({ arrayBuffer });
+                    const parsedText = result.value.replace(/<[^>]*>/g, ''); // Убираем HTML теги
+                    console.log('DOCX распарсен, длина текста:', parsedText.length);
+                    messageText = text ? `${text}\n\nТекст из документа:\n${parsedText}` : parsedText;
+                } catch (error) {
+                    console.error('Ошибка при парсинге DOCX:', error);
+                    messageText = text || 'Ошибка при чтении документа';
+                }
+            } else if (file.name.endsWith('.doc')) {
+                // DOC файл - пока просто отправляем название файла
+                console.log('DOC файл, отправляем название');
+                messageText = text ? `${text}\n\nПрикреплен файл: ${file.name}` : `Прикреплен файл: ${file.name}`;
             }
         }
 
-        if (!messageText) return; // Нельзя отправить пустое сообщение
+        console.log('Итоговый текст сообщения:', messageText);
+
+        if (!messageText) {
+            console.warn('Пустое сообщение, отмена отправки');
+            return;
+        }
 
         // Если нет активного чата - создаем новый
         if (!currentChat) {
+            console.log('Нет активного чата, создаем новый');
             // Название чата = первые 50 символов сообщения
             const chatTitle = messageText.length > 50 
                 ? messageText.substring(0, 50) + '...' 
@@ -45,9 +80,13 @@ const ChatPage = () => {
             
             // Отправляем сообщение в созданный чат
             if (newChat) {
+                console.log('Новый чат создан, ID:', newChat.id);
                 await sendMessage(messageText, newChat.id);
+            } else {
+                console.error('Не удалось создать новый чат');
             }
         } else {
+            console.log('Отправка в существующий чат, ID:', currentChat.id);
             await sendMessage(messageText);
         }
     };
@@ -69,8 +108,8 @@ const ChatPage = () => {
                         {/* Если нет сообщений - показываем инпут по центру */}
                         {messages.length === 0 ? (
                             <div className="flex-1 flex items-center pb-[4vw]">
-                                <div className="w-full pl-[2.4vw]">
-                                    <div className="w-[65%] mx-auto">
+                                <div className="w-full pl-[0.9vw]">
+                                    <div className="mx-auto" style={chatWidthStyle}>
                                         <ChatInput 
                                             onSendMessage={handleSendMessage}
                                             onFileAttach={(file) => {
@@ -96,10 +135,10 @@ const ChatPage = () => {
                                             display: none;
                                         }
                                     `}</style>
-                                    <ChatMessages messages={messages} />
+                                            <ChatMessages messages={messages} isLoading={isLoading} />
                                 </div>
-                                <div className="flex-shrink-0 w-full pb-[1.5vw] pl-[1vw]">
-                                    <div className="w-[55%] mx-auto">
+                                <div className="flex-shrink-0 w-full pb-[1.5vw] pl-[0.9vw]">
+                                    <div className="mx-auto" style={chatWidthStyle}>
                                         <ChatInput 
                                             onSendMessage={handleSendMessage}
                                             onFileAttach={(file) => {
@@ -113,18 +152,16 @@ const ChatPage = () => {
                         )}
                     </>
                 ) : (
-                    /* Если нет выбранного чата - показываем инпут как в ChatGPT */
-                    <div className="flex-1 flex items-center pb-[4vw]">
-                        <div className="w-full pl-[1vw]">
-                            <div className="w-[55%] mx-auto">
-                                <ChatInput 
-                                    onSendMessage={handleSendMessage}
-                                    onFileAttach={(file) => {
-                                        setAttachedFile(file);
-                                        setIsEditorOpen(true);
-                                    }}
-                                />
-                            </div>
+                    <div className="flex-1 flex w-full items-center justify-center pb-[4vw]">
+                        <div style={chatWidthStyle}>
+                            <ChatInput
+                                onSendMessage={handleSendMessage}
+                                onFileAttach={(file) => {
+                                    setAttachedFile(file);
+                                    setIsEditorOpen(true);
+                                }}
+                            />
+
                         </div>
                     </div>
                 )}
@@ -132,7 +169,7 @@ const ChatPage = () => {
 
                 {/* Область редактора */}
                 {isEditorOpen && (
-                    <div className="w-[calc(50%)] h-full pl-[1vw] pt-[2.3vw] pb-[1.2vw] pr-[0.3vw]">
+                    <div className="w-[calc(50%)] h-full pl-[1vw] pt-[2.3vw] pb-[1.2vw] pr-[0.3vw] animate-slideInRight">
                         <DocumentEditor 
                             file={attachedFile}
                             onClose={() => {
@@ -144,7 +181,12 @@ const ChatPage = () => {
                     </div>
                 )}
             </div>
-            
+            <div>
+
+                {isEditorOpen && <div className='animate-slideInLeft'>
+                    <Editor/>
+                </div>}
+            </div>
 
         </div>
     )
