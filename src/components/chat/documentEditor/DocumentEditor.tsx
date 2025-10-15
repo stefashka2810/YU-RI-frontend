@@ -1,7 +1,8 @@
 'use client'
-import Image from 'next/image';
 import { useState, DragEvent, useEffect, useRef } from 'react';
 import mammoth from 'mammoth';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
+import { saveAs } from 'file-saver';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -52,6 +53,114 @@ export const Editor = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    // Функция сохранения файла в формате DOCX
+    const handleSaveFile = async () => {
+        // Находим contentEditable элемент
+        const contentEditableElement = document.querySelector('[contenteditable="true"]') as HTMLElement;
+        
+        if (!contentEditableElement) {
+            console.error('Не найден редактируемый элемент');
+            return;
+        }
+
+        try {
+            // Вспомогательная функция для парсинга элементов с форматированием
+            const parseElement = (el: HTMLElement): TextRun[] => {
+                const runs: TextRun[] = [];
+                
+                for (let i = 0; i < el.childNodes.length; i++) {
+                    const node = el.childNodes[i];
+                    
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const text = node.textContent || '';
+                        if (text) {
+                            runs.push(new TextRun({
+                                text: text,
+                                font: "Montserrat",
+                                size: 24,
+                            }));
+                        }
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        const child = node as HTMLElement;
+                        const tagName = child.tagName.toLowerCase();
+                        const text = child.textContent || '';
+                        
+                        if (tagName === 'b' || tagName === 'strong') {
+                            runs.push(new TextRun({ text, font: "Montserrat", size: 24, bold: true }));
+                        } else if (tagName === 'i' || tagName === 'em') {
+                            runs.push(new TextRun({ text, font: "Montserrat", size: 24, italics: true }));
+                        } else if (tagName === 'u') {
+                            runs.push(new TextRun({ text, font: "Montserrat", size: 24, underline: {} }));
+                        } else if (tagName === 's' || tagName === 'strike') {
+                            runs.push(new TextRun({ text, font: "Montserrat", size: 24, strike: true }));
+                        } else {
+                            runs.push(new TextRun({ text, font: "Montserrat", size: 24 }));
+                        }
+                    }
+                }
+                
+                return runs;
+            };
+            
+            const paragraphs: Paragraph[] = [];
+            
+            // Обрабатываем каждый дочерний элемент contentEditable
+            for (let i = 0; i < contentEditableElement.children.length; i++) {
+                const child = contentEditableElement.children[i] as HTMLElement;
+                const tagName = child.tagName.toLowerCase();
+                
+                if (tagName === 'p' || tagName === 'div') {
+                    const textRuns = parseElement(child);
+                    paragraphs.push(new Paragraph({
+                        children: textRuns.length > 0 ? textRuns : [new TextRun({ text: "" })],
+                        alignment: child.style.textAlign === 'center' ? AlignmentType.CENTER : 
+                                  child.style.textAlign === 'right' ? AlignmentType.RIGHT : 
+                                  AlignmentType.LEFT,
+                    }));
+                } else if (tagName === 'ul' || tagName === 'ol') {
+                    for (let j = 0; j < child.children.length; j++) {
+                        const li = child.children[j] as HTMLElement;
+                        const textRuns = parseElement(li);
+                        paragraphs.push(new Paragraph({
+                            children: textRuns.length > 0 ? textRuns : [new TextRun({ text: li.textContent || "" })],
+                        }));
+                    }
+                } else {
+                    const textRuns = parseElement(child);
+                    if (textRuns.length > 0) {
+                        paragraphs.push(new Paragraph({ children: textRuns }));
+                    }
+                }
+            }
+            
+            // Если нет параграфов, используем innerText
+            if (paragraphs.length === 0) {
+                const textContent = contentEditableElement.innerText || '';
+                const lines = textContent.split('\n');
+                for (const line of lines) {
+                    if (line.trim()) {
+                        paragraphs.push(new Paragraph({
+                            children: [new TextRun({ text: line, font: "Montserrat", size: 24 })],
+                        }));
+                    }
+                }
+            }
+            
+            // Создаем DOCX документ
+            const doc = new Document({
+                sections: [{ properties: {}, children: paragraphs }],
+            });
+
+            // Генерируем и сохраняем файл
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `document_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.docx`);
+            
+            console.log('DOCX файл с форматированием сохранен');
+        } catch (error) {
+            console.error('Ошибка при сохранении файла:', error);
+        }
+    };
 
     return (
         <div className='flex flex-col ml-[0.5vw] mt-[1.3vw] w-[13.5vw] h-[7vw] bg-transparent'>
@@ -180,30 +289,19 @@ export const Editor = () => {
                     </div>
 
                     <div className='flex flex-row border border-white rounded-[4px]'>
-                        <button onClick={() => {
-                            const url = prompt('Введите URL:');
-                            if (url) handleFormat('createLink', url);
-                        }} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
+                        <button onClick={handleSaveFile} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
                             <div className='w-[1vw] h-[1vw] flex items-center justify-center'>
-                                <img src='/editorImages/link-2.svg' alt='link' className='w-full h-full object-contain' />
+                                <img src='/editorImages/arrow-down-to-line.svg' alt='download' className='w-full h-full object-contain' />
                             </div>
                         </button>
-                        <button onClick={() => {
-                            const url = prompt('Введите URL изображения:');
-                            if (url) handleFormat('insertImage', url);
-                        }} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
+                        <button onClick={() => {handleFormat('undo')}} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
                             <div className='w-[1vw] h-[1vw] flex items-center justify-center'>
-                                <img src='/editorImages/image.svg' alt='image' className='w-full h-full object-contain' />
+                                <img src='/editorImages/undo-2.svg' alt='undo' className='w-full h-full object-contain stroke-white' />
                             </div>
                         </button>
-                        <button onClick={() => handleFormat('insertHorizontalRule')} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
+                        <button onClick={() => {handleFormat('redo')}} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
                                 <div className='w-[1vw] h-[1vw] flex items-center justify-center'>
-                                <img src='/editorImages/youtube.svg' alt='youtube' className='w-full h-full object-contain' />
-                            </div>
-                        </button>
-                        <button onClick={() => handleFormat('formatBlock', 'pre')} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A]'>
-                            <div className='w-[1vw] h-[1vw] flex items-center justify-center'>
-                                <img src='/editorImages/code.svg' alt='code' className='w-full h-full object-contain' />
+                                <img src='/editorImages/redo-2.svg' alt='redo' className='w-full h-full object-contain stroke-white' />
                             </div>
                         </button>
                     </div>
@@ -316,20 +414,13 @@ const DocumentEditor = ({ file, onFileSelect }: DocumentEditorProps) => {
                             </div>
                         ) : (
                             // Для других файлов показываем информацию
-                            <div className="w-full h-full flex flex-col items-center justify-center gap-[1vw] text-white bg-[#0A0A0A] rounded-[10px]">
-                                <Image 
-                                    src='/chatImages/FileIcon.png' 
-                                    alt='file' 
-                                    width={80} 
-                                    height={80}
-                                />
-                                <p className="text-[1vw] font-medium">{file.name}</p>
-                                <p className="text-[0.8vw] text-gray-400">
-                                    {(file.size / 1024).toFixed(2)} KB
-                                </p>
-                                <p className="text-[0.75vw] text-gray-500 mt-[1vw] text-center max-w-[80%]">
-                                    Файл готов к отправке
-                                </p>
+                            <div className="w-full h-full">
+                            <div className="w-full h-full flex flex-col items-center justify-center rounded-[15px]">
+                                <div className="text-[#FFFFFFCC] text-[1vw] text-center">
+                                    Формат документа не поддерживается, 
+                                    поддерживаются только DOCX и DOC
+                                </div>
+                            </div>
                             </div>
                         )}
                     </div>
@@ -347,7 +438,7 @@ const DocumentEditor = ({ file, onFileSelect }: DocumentEditorProps) => {
                             onDrop={handleDrop}
                         >
                             
-                            <p className="text-[#FFFFFFCC] text-[1vw] mt-[1.5vw]">
+                            <p className="text-[#FFFFFFCC] text-[1vw]">
                                 Выберите документ или прикрепите его сюда
                             </p>
                             

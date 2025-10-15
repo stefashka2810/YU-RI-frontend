@@ -18,7 +18,7 @@ const AboutUsage= () => {
                                 alt="1"
                                 width={187}
                                 height={225}
-                                className="z-10 w-full max-w-[187px]"
+                                className="z-10 w-full  max-w-[187px]"
                             />
                             <div className="absolute top-[7vw] left-0 w-full z-20 text-[1vw] ">
                                 ЗАГРУЗКА ДОКУМЕНТА
