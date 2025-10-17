@@ -16,9 +16,9 @@ const AboutUsage= () => {
                             <Image
                                 src="/landingImages/01.png"
                                 alt="1"
-                                width={187}
-                                height={225}
-                                className="z-10 w-full  max-w-[187px]"
+                                width={177}
+                                height={215}
+                                className="z-10 "
                             />
                             <div className="absolute top-[7vw] left-0 w-full z-20 text-[1vw] ">
                                 ЗАГРУЗКА ДОКУМЕНТА
@@ -70,7 +70,7 @@ const AboutUsage= () => {
                             alt="computer"
                             width={1000}
                             height={620}
-                            className="max-w-full h-auto"
+                            className="w-full max-w-full h-auto"
                         />
                     </div>
                 </div>
