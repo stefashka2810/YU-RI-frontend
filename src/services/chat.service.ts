@@ -46,7 +46,7 @@ const chatService = {
 
     // Генерировать ответ ИИ
     generateAiResponse: async (chatId: number): Promise<Message> => {
-        console.log('🚀 Отправка запроса на генерацию ответа ИИ:', {
+        console.log('Отправка запроса на генерацию ответа ИИ:', {
             url: `/chat/messages/${chatId}/ai-response`,
             method: 'POST',
             chatId
@@ -56,7 +56,7 @@ const chatService = {
             method: 'POST',
         });
         
-        console.log('📨 Ответ от API:', response);
+        console.log('Ответ от API:', response);
         return response;
     },
 

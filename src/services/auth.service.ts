@@ -5,7 +5,6 @@ import { API_BASE_URL } from "@/lib/api/endpoints";
 
 // Сервис для работы с авторизацией
 const authService = {
-    // Авторизация пользователя
     login: async (credentials: UserLogin): Promise<AuthResponse> => {
         const response = await apiRequest<AuthResponse>('/auth/login', {
             method: 'POST',
@@ -18,7 +17,6 @@ const authService = {
             tokenType: response.token_type
         });
         
-        // Сохраняем оба токена после успешного логина
         if (response.access_token) {
             saveToken(response.access_token);
             console.log('Access token saved');
@@ -43,7 +41,6 @@ const authService = {
             body: JSON.stringify(userData),
         });
         
-        // Сохраняем оба токена после успешной регистрации
         if (response.access_token) {
             saveToken(response.access_token);
         }
@@ -71,7 +68,7 @@ const authService = {
         });
 
         if (!response.ok) {
-            removeToken(); // Удаляем токены при неудаче
+            removeToken();
             throw new Error('Не удалось обновить токен');
         }
 

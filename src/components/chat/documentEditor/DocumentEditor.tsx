@@ -32,12 +32,11 @@ export const Editor = () => {
         { value: '7', label: '24' }
     ];
 
-    // Обработчик для форматирования
+    // устарел (возможно заменить)
     const handleFormat = (command: string, value?: string) => {
         document.execCommand(command, false, value);
     };
 
-    // Закрытие dropdown'ов при клике вне их области
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (fontDropdownRef.current && !fontDropdownRef.current.contains(event.target as Node)) {
@@ -54,9 +53,7 @@ export const Editor = () => {
         };
     }, []);
 
-    // Функция сохранения файла в формате DOCX
     const handleSaveFile = async () => {
-        // Находим contentEditable элемент
         const contentEditableElement = document.querySelector('[contenteditable="true"]') as HTMLElement;
         
         if (!contentEditableElement) {
@@ -65,7 +62,6 @@ export const Editor = () => {
         }
 
         try {
-            // Вспомогательная функция для парсинга элементов с форматированием
             const parseElement = (el: HTMLElement): TextRun[] => {
                 const runs: TextRun[] = [];
                 
@@ -105,7 +101,6 @@ export const Editor = () => {
             
             const paragraphs: Paragraph[] = [];
             
-            // Обрабатываем каждый дочерний элемент contentEditable
             for (let i = 0; i < contentEditableElement.children.length; i++) {
                 const child = contentEditableElement.children[i] as HTMLElement;
                 const tagName = child.tagName.toLowerCase();
@@ -134,7 +129,6 @@ export const Editor = () => {
                 }
             }
             
-            // Если нет параграфов, используем innerText
             if (paragraphs.length === 0) {
                 const textContent = contentEditableElement.innerText || '';
                 const lines = textContent.split('\n');
@@ -147,12 +141,10 @@ export const Editor = () => {
                 }
             }
             
-            // Создаем DOCX документ
             const doc = new Document({
                 sections: [{ properties: {}, children: paragraphs }],
             });
 
-            // Генерируем и сохраняем файл
             const blob = await Packer.toBlob(doc);
             saveAs(blob, `document_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.docx`);
             
@@ -164,11 +156,8 @@ export const Editor = () => {
 
     return (
         <div className='flex flex-col ml-[0.5vw] mt-[1.3vw] w-[13.5vw] h-[7vw] bg-transparent'>
-            {/* Панель инструментов */}
             <div className='flex flex-col gap-[0.5vw] p-[1vw] '>
-                {/* Первая строка: шрифт и размер */}
                 <div className='flex flex-row gap-[0.5vw]'>
-                    {/* Кастомный селект для шрифта */}
                     <div className='relative' ref={fontDropdownRef}>
                         <button
                             onClick={() => setIsFontDropdownOpen(!isFontDropdownOpen)}
@@ -196,7 +185,6 @@ export const Editor = () => {
                         )}
                     </div>
 
-                    {/* Кастомный селект для размера */}
                     <div className='relative' ref={sizeDropdownRef}>
                         <button
                             onClick={() => setIsSizeDropdownOpen(!isSizeDropdownOpen)}
@@ -225,7 +213,6 @@ export const Editor = () => {
                     </div>
                 </div>
 
-                {/* Вторая строка: форматирование текста */}
                 <div className='flex flex-row gap-[0.5vw]'>
                     <div className='flex flex-row border border-white rounded-[4px]'>
                         <button onClick={() => handleFormat('bold')} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
@@ -273,7 +260,6 @@ export const Editor = () => {
                     </div>
                 </div>
 
-                {/* Третья строка: дополнительные функции */}
                 <div className='flex flex-row gap-[0.5vw]'>
                     <div className='flex flex-row border border-white rounded-[4px]'>
                         <button onClick={() => handleFormat('insertUnorderedList')} className='w-[1.5vw] h-[1.5vw] flex items-center justify-center hover:bg-[#FFFFFF1A] border-r border-white'>
@@ -331,13 +317,11 @@ const DocumentEditor = ({ file, onFileSelect }: DocumentEditorProps) => {
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [docxHtml, setDocxHtml] = useState<string | null>(null);
 
-    // Создаем URL для просмотра файла
     useEffect(() => {
         if (file) {
             const url = URL.createObjectURL(file);
             setFileUrl(url);
 
-            // Если это DOCX, конвертируем в HTML с помощью mammoth
             if (file.name.endsWith('.docx')) {
                 const reader = new FileReader();
                 reader.onload = async (e) => {
@@ -384,13 +368,10 @@ const DocumentEditor = ({ file, onFileSelect }: DocumentEditorProps) => {
     return (
         <div className="w-full h-full bg-[#FFFFFF33] flex flex-col overflow-hidden rounded-[10px]">
             
-            {/* Контент документа */}
             <div className="flex-1 overflow-hidden">
                 {file ? (
-                    // Если файл прикреплен - показываем его
                     <div className="w-full h-full">
                         {file.name.endsWith('.docx') && docxHtml ? (
-                            // DOCX - отображаем конвертированный HTML с возможностью редактирования
                             <div className="w-full h-full overflow-auto bg-white rounded-[10px] p-[2vw]">
                                 <div 
                                     className="text-black prose prose-sm max-w-none outline-none"
@@ -413,7 +394,6 @@ const DocumentEditor = ({ file, onFileSelect }: DocumentEditorProps) => {
                                 />
                             </div>
                         ) : (
-                            // Для других файлов показываем информацию
                             <div className="w-full h-full">
                             <div className="w-full h-full flex flex-col items-center justify-center rounded-[15px]">
                                 <div className="text-[#FFFFFFCC] text-[1vw] text-center">
@@ -425,7 +405,6 @@ const DocumentEditor = ({ file, onFileSelect }: DocumentEditorProps) => {
                         )}
                     </div>
                 ) : (
-                    // Если файла нет - показываем дроп-зону
                     <div className="w-full h-full p-[1.5vw]">
                         <div 
                             className={`w-full h-full flex flex-col items-center justify-center rounded-[15px] transition-colors ${

@@ -1,7 +1,6 @@
 import { API_BASE_URL } from "./endpoints";
 import { getToken, saveToken, removeToken, getRefreshToken } from "@/utils/token.utils";
 
-// Флаг для предотвращения множественных одновременных refresh запросов
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
 
@@ -41,7 +40,6 @@ async function refreshAccessToken(): Promise<string> {
     throw new Error('Access токен отсутствует в ответе');
 }
 
-// Универсальная функция для всех API запросов
 async function apiRequest<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -65,7 +63,6 @@ async function apiRequest<T>(
             // Если уже идет процесс refresh - ждем его завершения
             if (isRefreshing && refreshPromise) {
                 const newToken = await refreshPromise;
-                // Повторяем запрос с новым токеном
                 const retryConfig = {
                     ...config,
                     headers: {
@@ -88,14 +85,12 @@ async function apiRequest<T>(
                 return await retryResponse.json();
             }
 
-            // Начинаем процесс refresh
             isRefreshing = true;
             refreshPromise = refreshAccessToken();
 
             try {
                 const newToken = await refreshPromise;
                 
-                // Повторяем исходный запрос с новым токеном
                 const retryConfig = {
                     ...config,
                     headers: {
@@ -122,7 +117,6 @@ async function apiRequest<T>(
             }
         }
         
-        // Проверяем успешность запроса
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({
                 detail: 'Произошла ошибка при выполнении запроса'
@@ -133,13 +127,10 @@ async function apiRequest<T>(
             };
         }
 
-        // Возвращаем данные
         return await response.json();
     } catch (error) {
-        // Пробрасываем ошибку дальше для обработки в сервисах
         throw error;
     }
 }
 
-// Экспортируем функцию для использования в сервисах
 export default apiRequest;

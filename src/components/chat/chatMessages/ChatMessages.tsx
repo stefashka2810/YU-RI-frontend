@@ -25,7 +25,6 @@ const ChatMessages = ({ messages, isLoading = false, isEditorOpen = false, onReg
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // Функция копирования текста
     const copyToClipboard = async (text: string) => {
         try {
             await navigator.clipboard.writeText(text);
@@ -35,7 +34,7 @@ const ChatMessages = ({ messages, isLoading = false, isEditorOpen = false, onReg
         }
     };
 
-    // Функция повторной генерации ответа
+    // Функция повторной генерации ответа (ДОРАБОТАТЬ)
     const handleRegenerate = (messageId: number) => {
         if (onRegenerateMessage) {
             onRegenerateMessage(messageId);
@@ -88,7 +87,6 @@ const ChatMessages = ({ messages, isLoading = false, isEditorOpen = false, onReg
                     </div>
                 ))}
                 
-                {/* Индикатор загрузки ответа нейросети */}
                 {isLoading && (
                     <div className="flex justify-start mb-[1.5vw]">
                         <div className="max-w-[90%]">

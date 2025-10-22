@@ -27,7 +27,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Загрузить список чатов
     const loadChats = async () => {
         try {
             setIsLoading(true);
@@ -41,7 +40,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // Создать новый чат
     const createNewChat = async (title: string): Promise<Chat | null> => {
         try {
             setIsLoading(true);
@@ -58,7 +56,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // Выбрать чат (загрузить с сообщениями)
     const selectChat = async (chatId: number) => {
         try {
             setIsLoading(true);
@@ -72,7 +69,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // Отправить сообщение
     const sendMessage = async (content: string, chatId?: number) => {
         const targetChatId = chatId || currentChat?.id;
 
@@ -86,12 +82,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             
             console.log('Отправка сообщения:', content);
             
-            // Отправляем сообщение пользователя
             const userMessage = await chatService.postMessage(targetChatId, content);
             
             console.log('Сообщение пользователя отправлено:', userMessage);
             
-            // Обновляем текущий чат с сообщением пользователя
             setCurrentChat(prev => {
                 if (!prev || prev.id !== targetChatId) return prev;
                 return {
@@ -100,12 +94,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 };
             });
 
-            // Генерируем ответ ИИ (можно временно отключить для тестирования)
             try {
                 await generateAiResponse(targetChatId);
             } catch (err) {
-                console.warn('⚠️ Ошибка при генерации ответа ИИ, продолжаем без него:', err);
-                // Не прерываем выполнение, просто логируем ошибку
+                console.warn('Ошибка при генерации ответа ИИ, продолжаем без него:', err);
             }
 
         } catch (err) {
@@ -115,7 +107,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // Генерировать ответ ИИ
     const generateAiResponse = async (chatId?: number) => {
         const targetChatId = chatId || currentChat?.id;
 
@@ -125,24 +116,21 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
 
         try {
-            console.log('🤖 Генерация ответа ИИ для чата:', targetChatId);
-            console.log('📝 Текущие сообщения в чате:', currentChat?.messages);
+            console.log('Генерация ответа ИИ для чата:', targetChatId);
+            console.log('Текущие сообщения в чате:', currentChat?.messages);
             
-            // Генерируем ответ ИИ
             const aiMessage = await chatService.generateAiResponse(targetChatId);
             
-            console.log('✅ Ответ ИИ получен:', aiMessage);
-            console.log('📄 Содержимое ответа:', aiMessage.content);
+            console.log('Ответ ИИ получен:', aiMessage);
+            console.log('Содержимое ответа:', aiMessage.content);
             
-            // Проверяем, не является ли ответ ошибкой
-            if (aiMessage.content.includes('не могу обработать') || 
+            if (aiMessage.content.includes('не могу обработать') ||
                 aiMessage.content.includes('служба анализа временно недоступна')) {
-                console.warn('⚠️ Нейросеть вернула сообщение об ошибке:', aiMessage.content);
+                console.warn('Нейросеть вернула сообщение об ошибке:', aiMessage.content);
                 setError(`Нейросеть недоступна: ${aiMessage.content}`);
                 return;
             }
             
-            // Обновляем текущий чат с ответом ИИ
             setCurrentChat(prev => {
                 if (!prev || prev.id !== targetChatId) return prev;
                 return {
@@ -152,7 +140,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             });
 
         } catch (err: unknown) {
-            console.error('❌ Ошибка при генерации ответа ИИ:', err);
+            console.error('Ошибка при генерации ответа ИИ:', err);
             
             const errorMessage = handleApiError(err);
             setError(`Ошибка генерации ответа: ${errorMessage}`);
@@ -178,7 +166,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const clearError = () => setError(null);
 
-    // Загрузить чаты при монтировании
     useEffect(() => {
         loadChats();
     }, []);

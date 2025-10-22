@@ -8,7 +8,6 @@ const AboutPrices = () => {
             </h2>
 
             <div className="grid grid-cols-[23vw_21vw_23vw] items-stretch">
-                {/* БАЗОВЫЙ */}
                 <div className="relative flex flex-col h-full p-[1vw] bg-gradient-to-t from-[#0B0B0B] via-[#1A1A1A] to-[#7F7F7F] text-white">
                     <div className="flex-1 z-10"> {/* Добавляем z-10 чтобы контент был над картинкой */}
                         <div className="flex flex-row mb-[0.8vw] justify-between">
@@ -27,18 +26,15 @@ const AboutPrices = () => {
                         </ul>
                     </div>
 
-                    {/* Абстрактная форма - выходит за пределы */}
                     <div className="pointer-events-none absolute left-[15vw] bottom-1/6 w-[15vw] h-[15vw] opacity-90">
                         <Image src="/landingImages/1.png" alt="" fill className="object-contain" />
                     </div>
 
-                    {/* Кнопка - прижата к низу */}
                     <button className="w-full flex flex-row items-center justify-center rounded-full px-[4vw] py-[0.8vw] text-[0.85vw] bg-white/10 hover:bg-white/20 transition mt-auto z-10">
                         ОТКАЗАТЬСЯ ОТ ПОДПИСКИ
                     </button>
                 </div>
 
-                {/* ПРОДВИНУТЫЙ */}
                 <div className="relative flex flex-col h-full p-[1vw] bg-transparent backdrop-blur-xs">
                     <div className="flex-1 z-10">
                         <div className="flex flex-row mb-[0.8vw]">
@@ -56,7 +52,6 @@ const AboutPrices = () => {
                         </ul>
                     </div>
 
-                    {/* Абстрактная форма - выходит за пределы */}
                     <div className="pointer-events-none absolute left-[13vw] bottom-1/6 w-[15vw] h-[15vw] opacity-90">
                         <Image src="/landingImages/13.png" alt="" fill className="object-contain" />
                     </div>
@@ -66,7 +61,6 @@ const AboutPrices = () => {
                     </button>
                 </div>
 
-                {/* УЛЬТРА */}
                 <div className="relative flex flex-col h-full p-[1vw] bg-transparent backdrop-blur-xs">
                     <div className="flex-1 z-10">
                         <div className="flex flex-row mb-[0.8vw]">
@@ -83,7 +77,6 @@ const AboutPrices = () => {
                         </ul>
                     </div>
 
-                    {/* Абстрактная форма - выходит за пределы */}
                     <div className="pointer-events-none absolute left-[15vw] bottom-1/6 w-[15vw] h-[15vw] opacity-90">
                         <Image src="/landingImages/4.png" alt="" fill className="object-contain" />
                     </div>

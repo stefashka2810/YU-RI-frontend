@@ -3,11 +3,9 @@ import Image from 'next/image'
 import { useChat } from '@/hooks/useChat'
 
 const ChatSidebar = () => {
-    const { chats, currentChat, selectChat, setCurrentChat, isLoading } = useChat();
+    const { chats, currentChat, selectChat, setCurrentChat} = useChat();
 
     const handleNewChat = () => {
-        // Просто сбрасываем текущий чат, чтобы показать пустой инпут
-        // Реальный чат создастся при отправке первого сообщения
         setCurrentChat(null);
     };
 
